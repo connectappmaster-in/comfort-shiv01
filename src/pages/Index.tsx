@@ -1,13 +1,8 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Phone, MessageCircle, CheckCircle, Award, Shield, Users, Clock, Mail, MapPin, Star } from "lucide-react";
+import { Phone, MessageCircle, Award, Shield, Users, Clock, Mail, MapPin, Star, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import heroImage from "@/assets/hero-ac.jpg";
-import acCleaning from "@/assets/ac-cleaning.jpg";
-import acInstallation from "@/assets/ac-installation.jpg";
-import acGasCheck from "@/assets/ac-gas-check.jpg";
-import acBeforeAfter from "@/assets/ac-before-after.jpg";
 import teamImage from "@/assets/team.jpg";
 import logo from "@/assets/logo.png";
 import Navbar from "@/components/Navbar";
@@ -18,6 +13,7 @@ import ServiceDetails from "@/components/ServiceDetails";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import HowItWorks from "@/components/HowItWorks";
 import AMCPlans from "@/components/AMCPlans";
+import GalleryTestimonials from "@/components/GalleryTestimonials";
 import MultiStepBookingForm from "@/components/MultiStepBookingForm";
 import { AnimatedCounter } from "@/hooks/use-counter-animation";
 const Index = () => {
@@ -143,23 +139,6 @@ const Index = () => {
     title: "Quick Service",
     desc: "Same/next-day availability"
   }];
-  const testimonials = [{
-    name: "Rajesh Kumar",
-    area: "Aundh, Pune",
-    text: "Excellent service! Very professional and punctual.",
-    rating: 5
-  }, {
-    name: "Priya Sharma",
-    area: "Pimpri",
-    text: "Best AC service in PCMC. Highly recommended!",
-    rating: 5
-  }, {
-    name: "Amit Desai",
-    area: "Wakad",
-    text: "Affordable and reliable. Been using for 2 years.",
-    rating: 5
-  }];
-  const gallery = [acCleaning, acInstallation, acGasCheck, acBeforeAfter];
   return <div className="min-h-screen bg-background pt-16">
       <Navbar />
       
@@ -181,75 +160,8 @@ const Index = () => {
       {/* AMC Plans Section */}
       <AMCPlans />
 
-      {/* Gallery + Testimonials Section */}
-      <section id="gallery" className="py-5 md:py-20 bg-muted">
-        <div className="container mx-auto px-2 md:px-4">
-          <motion.div {...fadeInUp} className="text-center mb-4 md:mb-12">
-            <h2 className="text-lg md:text-3xl lg:text-4xl font-bold mb-1.5 md:mb-4 text-foreground">Our Work</h2>
-            <p className="text-xs md:text-base text-muted-foreground max-w-2xl mx-auto">See the quality of our AC services</p>
-          </motion.div>
-
-          <motion.div {...staggerContainer} className="grid grid-cols-2 md:grid-cols-4 gap-1.5 md:gap-5 mb-5 md:mb-16 max-w-6xl mx-auto">
-            {gallery.map((img, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-            scale: 1.05
-          }} transition={{
-            duration: 0.3
-          }} className="relative overflow-hidden rounded-xl aspect-square cursor-pointer shadow-lg hover:shadow-2xl">
-                <img src={img} alt={`AC service work ${i + 1}`} className="w-full h-full object-cover" />
-              </motion.div>)}
-          </motion.div>
-
-          <motion.div {...fadeInUp} className="bg-background rounded-2xl p-3 md:p-10">
-            <h3 className="text-base md:text-2xl lg:text-3xl font-bold text-center mb-3 md:mb-10 text-foreground">What Our Customers Say</h3>
-            <motion.div {...staggerContainer} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1.5 md:gap-6 mb-3 md:mb-6 max-w-6xl mx-auto">
-              {testimonials.map((testimonial, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-              scale: 1.03,
-              y: -8
-            }} transition={{
-              duration: 0.3
-            }}>
-                  <Card className="p-2 md:p-7 border-2 h-full hover:border-primary/30 hover:shadow-lg transition-all">
-                    <div className="flex gap-0.5 md:gap-1 mb-2 md:mb-4">
-                      {[...Array(testimonial.rating)].map((_, j) => <motion.div key={j} initial={{
-                    scale: 0,
-                    opacity: 0
-                  }} whileInView={{
-                    scale: 1,
-                    opacity: 1
-                  }} transition={{
-                    delay: i * 0.15 + j * 0.1,
-                    duration: 0.3,
-                    ease: "easeOut"
-                  }} viewport={{
-                    once: true
-                  }}>
-                          <Star className="w-3 h-3 md:w-5 md:h-5 text-primary fill-primary" />
-                        </motion.div>)}
-                    </div>
-                    <p className="text-[10px] md:text-sm text-muted-foreground mb-2 md:mb-4 italic leading-relaxed">"{testimonial.text}"</p>
-                    <div>
-                      <p className="text-xs md:text-base font-bold text-foreground">{testimonial.name}</p>
-                      <p className="text-[10px] md:text-sm text-muted-foreground">{testimonial.area}</p>
-                    </div>
-                  </Card>
-                </motion.div>)}
-            </motion.div>
-            
-            <motion.div className="text-center" {...fadeInUp}>
-              <motion.div whileHover={{
-              scale: 1.05
-            }} whileTap={{
-              scale: 0.95
-            }}>
-                <Button onClick={() => window.open('https://share.google/XSCTACp1FdcN3VrHi', '_blank')} size="lg" className="h-8 md:h-12 px-3 md:px-7 text-xs md:text-base">
-                  <Star className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 fill-current" />
-                  Rate Us on Google
-                </Button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Gallery + Testimonials + Stats Section */}
+      <GalleryTestimonials />
 
       {/* About Us Section */}
       <section id="about" className="py-5 md:py-20 bg-background">
