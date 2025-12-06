@@ -2,85 +2,62 @@ import { motion } from "framer-motion";
 
 const HowItWorks = () => {
   const steps = [
-    {
-      num: 1,
-      title: "Contact Us",
-      desc: "Call, WhatsApp, or fill the booking form."
-    },
-    {
-      num: 2,
-      title: "Inspection",
-      desc: "Technician checks your AC and explains the issue."
-    },
-    {
-      num: 3,
-      title: "Service",
-      desc: "Work is done on the spot or scheduled if needed."
-    },
-    {
-      num: 4,
-      title: "Feedback & Payment",
-      desc: "Pay after the job is done. Share your feedback."
-    }
+    { num: 1, title: "Contact Us", desc: "Call, WhatsApp, or fill the form." },
+    { num: 2, title: "Inspection", desc: "Technician checks your AC." },
+    { num: 3, title: "Service", desc: "Work done on spot or scheduled." },
+    { num: 4, title: "Feedback", desc: "Pay after job. Share feedback." }
   ];
 
   return (
-    <section className="py-12 md:py-20 bg-accent">
+    <section className="py-8 md:py-12 bg-muted/50">
       <div className="container mx-auto px-4">
-        {/* Section Heading */}
         <motion.div 
-          className="text-center mb-10 md:mb-14"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-center mb-6 md:mb-8"
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-foreground">
-            How It Works
-          </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-            Simple 4-step process to get your AC serviced
-          </p>
+          <h2 className="section-heading">How It Works</h2>
+          <p className="section-subheading">Simple 4-step process</p>
         </motion.div>
 
-        {/* Desktop Timeline */}
-        <div className="hidden md:block max-w-5xl mx-auto">
+        {/* Desktop Horizontal Timeline */}
+        <div className="hidden md:block max-w-4xl mx-auto">
           <div className="relative">
-            {/* Connecting Line */}
-            <div className="absolute top-8 left-0 right-0 h-0.5 bg-border" />
+            {/* Background Line */}
+            <div className="absolute top-5 left-0 right-0 h-0.5 bg-border" />
+            {/* Animated Line */}
             <motion.div 
-              className="absolute top-8 left-0 h-0.5 bg-primary"
+              className="absolute top-5 left-0 h-0.5 bg-primary"
               initial={{ width: 0 }}
               whileInView={{ width: "100%" }}
               viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             />
 
-            {/* Steps */}
-            <div className="grid grid-cols-4 gap-6 relative">
+            <div className="grid grid-cols-4 gap-4 relative">
               {steps.map((step, index) => (
                 <motion.div
                   key={step.num}
                   className="text-center"
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.15 }}
+                  transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                 >
-                  {/* Numbered Circle */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold shadow-lg relative z-10">
+                  <div className="flex justify-center mb-4">
+                    <motion.div 
+                      className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shadow-md relative z-10"
+                      whileInView={{ scale: [1, 1.1, 1] }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: 0.4 + index * 0.15 }}
+                    >
                       {step.num}
-                    </div>
+                    </motion.div>
                   </div>
-
-                  {/* Content */}
-                  <h4 className="text-lg font-bold mb-2 text-foreground">
-                    {step.title}
-                  </h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {step.desc}
-                  </p>
+                  <h4 className="text-sm font-bold mb-1 text-foreground">{step.title}</h4>
+                  <p className="text-xs text-muted-foreground">{step.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -88,35 +65,26 @@ const HowItWorks = () => {
         </div>
 
         {/* Mobile Vertical Layout */}
-        <div className="md:hidden max-w-sm mx-auto">
+        <div className="md:hidden max-w-xs mx-auto">
           <div className="relative">
-            {/* Vertical Line */}
-            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border" />
+            <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-border" />
 
-            {/* Steps */}
-            <div className="space-y-8">
+            <div className="space-y-4">
               {steps.map((step, index) => (
                 <motion.div
                   key={step.num}
-                  className="flex items-start gap-4 relative"
-                  initial={{ opacity: 0, x: -20 }}
+                  className="flex items-center gap-3 relative"
+                  initial={{ opacity: 0, x: -15 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  transition={{ duration: 0.3, delay: index * 0.08 }}
                 >
-                  {/* Numbered Circle */}
-                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shadow-md flex-shrink-0 relative z-10">
+                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-base font-bold shadow-sm flex-shrink-0 relative z-10">
                     {step.num}
                   </div>
-
-                  {/* Content */}
-                  <div className="pt-2">
-                    <h4 className="text-base font-bold mb-1 text-foreground">
-                      {step.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {step.desc}
-                    </p>
+                  <div>
+                    <h4 className="text-sm font-bold text-foreground">{step.title}</h4>
+                    <p className="text-xs text-muted-foreground">{step.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -124,15 +92,14 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Note */}
         <motion.p 
-          className="text-center text-sm text-muted-foreground mt-8 md:mt-12"
+          className="text-center text-xs text-muted-foreground mt-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.6 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
         >
-          Same/next-day service available in most Pune & PCMC areas.
+          Same/next-day service in most Pune & PCMC areas.
         </motion.p>
       </div>
     </section>
