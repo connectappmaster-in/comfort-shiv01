@@ -16,6 +16,8 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import Services from "@/components/Services";
 import ServiceDetails from "@/components/ServiceDetails";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
+import HowItWorks from "@/components/HowItWorks";
+import AMCPlans from "@/components/AMCPlans";
 import MultiStepBookingForm from "@/components/MultiStepBookingForm";
 import { AnimatedCounter } from "@/hooks/use-counter-animation";
 const Index = () => {
@@ -124,22 +126,6 @@ const Index = () => {
     const message = `Hi Comfort Technical Services! I'm interested in ${serviceName}. Could you please provide more details about pricing and availability?`;
     window.open(createWhatsAppLink(message), '_blank');
   };
-  const amcPlans = [{
-    name: "Home Plan",
-    visits: "4 visits/year",
-    includes: ["Basic servicing", "Filter cleaning", "Priority support"],
-    price: "₹2,499/year"
-  }, {
-    name: "Office Plan",
-    visits: "6 visits/year",
-    includes: ["Servicing", "Gas top-up", "Emergency support", "Priority scheduling"],
-    price: "₹4,999/year"
-  }, {
-    name: "Commercial Plan",
-    visits: "12 visits/year",
-    includes: ["Full maintenance", "Gas refills", "24/7 support", "Free minor repairs"],
-    price: "Custom quote"
-  }];
   const values = [{
     icon: <Award className="w-8 h-8" />,
     title: "Quality Work",
@@ -190,83 +176,10 @@ const Index = () => {
       <ServiceDetails />
 
       {/* How It Works Section */}
-      <section className="py-5 md:py-20 bg-accent">
-        <div className="container mx-auto px-2 md:px-4">
-          <motion.div {...fadeInUp} className="text-center mb-4 md:mb-12">
-            <h2 className="text-lg md:text-3xl lg:text-4xl font-bold mb-1.5 md:mb-4 text-foreground">How It Works</h2>
-            <p className="text-xs md:text-base text-muted-foreground max-w-2xl mx-auto">Simple 4-step process to get your AC serviced</p>
-          </motion.div>
-          <motion.div className="max-w-5xl mx-auto">
-            <motion.div {...staggerFast} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 md:gap-6">
-              {[{
-              num: "1",
-              title: "Contact Us",
-              desc: "Call, WhatsApp, or book online"
-            }, {
-              num: "2",
-              title: "Inspection",
-              desc: "Expert diagnosis of your AC"
-            }, {
-              num: "3",
-              title: "Service",
-              desc: "Professional work completed"
-            }, {
-              num: "4",
-              title: "Satisfaction",
-              desc: "Payment & your feedback"
-            }].map((step, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-              scale: 1.05,
-              y: -8
-            }} className="text-center">
-                  <Card className="p-2 md:p-7 h-full flex flex-col items-center hover:shadow-lg transition-all">
-                    <motion.div className="w-8 h-8 md:w-16 md:h-16 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-sm md:text-2xl font-bold mb-2 md:mb-4" whileHover={{
-                  rotate: 360
-                }} transition={{
-                  duration: 0.6
-                }}>
-                      {step.num}
-                    </motion.div>
-                    <h4 className="text-xs md:text-lg font-bold mb-1 md:mb-2 text-foreground">{step.title}</h4>
-                    <p className="text-[10px] md:text-sm text-muted-foreground">{step.desc}</p>
-                  </Card>
-                </motion.div>)}
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      <HowItWorks />
 
       {/* AMC Plans Section */}
-      <section id="amc" className="py-5 md:py-20 bg-background">
-        <div className="container mx-auto px-2 md:px-4">
-          <motion.div {...fadeInUp} className="text-center mb-4 md:mb-12">
-            <h2 className="text-lg md:text-3xl lg:text-4xl font-bold mb-1.5 md:mb-4 text-foreground">AMC Plans</h2>
-            <p className="text-xs md:text-base text-muted-foreground max-w-2xl mx-auto">Long-term care for your air conditioning systems with priority service</p>
-          </motion.div>
-
-          <motion.div {...staggerContainer} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1.5 md:gap-6 max-w-6xl mx-auto">
-            {amcPlans.map((plan, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-            scale: 1.05,
-            y: -10
-          }} transition={{
-            duration: 0.3
-          }}>
-                <Card className="p-2 md:p-7 h-full cursor-pointer transition-all hover:shadow-xl hover:border-primary/30 border-2" onClick={() => handleServiceClick(`${plan.name} AMC`)}>
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1 md:gap-2 mb-1.5 md:mb-3">
-                    <h3 className="text-sm md:text-xl font-bold text-foreground">{plan.name}</h3>
-                    <p className="text-sm md:text-xl font-bold text-primary">{plan.price}</p>
-                  </div>
-                  <p className="text-[10px] md:text-sm text-primary font-semibold mb-2 md:mb-4">{plan.visits}</p>
-                  <ul className="space-y-1 md:space-y-2">
-                    {plan.includes.map((item, j) => <li key={j} className="flex items-start text-[10px] md:text-sm text-muted-foreground">
-                        <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-primary mr-1 md:mr-2 flex-shrink-0 mt-0.5" />
-                        {item}
-                      </li>)}
-                  </ul>
-                </Card>
-              </motion.div>)}
-          </motion.div>
-        </div>
-      </section>
+      <AMCPlans />
 
       {/* Gallery + Testimonials Section */}
       <section id="gallery" className="py-5 md:py-20 bg-muted">
