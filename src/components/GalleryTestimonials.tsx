@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, ExternalLink } from "lucide-react";
+import { Star, ExternalLink, Quote } from "lucide-react";
 import { AnimatedCounter } from "@/hooks/use-counter-animation";
 import acCleaning from "@/assets/ac-cleaning.jpg";
 import acInstallation from "@/assets/ac-installation.jpg";
@@ -10,24 +10,24 @@ import acBeforeAfter from "@/assets/ac-before-after.jpg";
 
 const GalleryTestimonials = () => {
   const gallery = [
-    { src: acCleaning, alt: "AC deep cleaning service" },
-    { src: acInstallation, alt: "AC installation work" },
-    { src: acGasCheck, alt: "AC gas refill and pressure check" },
-    { src: acBeforeAfter, alt: "Before and after AC cleaning" }
+    { src: acCleaning, alt: "AC deep cleaning", label: "Deep Cleaning" },
+    { src: acInstallation, alt: "AC installation", label: "Installation" },
+    { src: acGasCheck, alt: "Gas refill", label: "Gas Refill" },
+    { src: acBeforeAfter, alt: "Before & after", label: "Before/After" }
   ];
 
   const testimonials = [
     {
-      text: "Very happy with the service. Technician came on time and fixed the cooling issue quickly. Will call again.",
+      text: "Very happy with the service. Technician came on time and fixed the cooling issue quickly.",
       name: "Rajesh Kumar",
       area: "Aundh, Pune",
-      service: "Split AC servicing and gas top-up"
+      service: "Split AC servicing"
     },
     {
       text: "Good work and fair pricing. They explained what was wrong before starting. No hidden charges.",
       name: "Priya Sharma",
       area: "Pimpri",
-      service: "Deep cleaning for 2 ACs"
+      service: "Deep cleaning"
     },
     {
       text: "Using their service for 2 years now. Reliable and affordable. They always pick up the call.",
@@ -38,157 +38,151 @@ const GalleryTestimonials = () => {
   ];
 
   const stats = [
-    { value: 7, suffix: "+", label: "Years Experience" },
-    { value: 10000, suffix: "+", label: "AC Units Serviced" },
-    { value: 150, suffix: "+", label: "Google Reviews" },
-    { value: 4.8, suffix: "/5", label: "Google Rating", isDecimal: true }
+    { value: 7, suffix: "+", label: "Years" },
+    { value: 10000, suffix: "+", label: "AC Units" },
+    { value: 150, suffix: "+", label: "Reviews" },
+    { value: 4.8, suffix: "/5", label: "Rating", isDecimal: true }
   ];
 
   return (
-    <section id="gallery" className="py-12 md:py-20 bg-muted">
+    <section id="gallery" className="py-8 md:py-12 bg-muted/50">
       <div className="container mx-auto px-4">
-        {/* Our Work Section */}
-        <motion.div 
-          className="text-center mb-8 md:mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-foreground">
-            Our Work
-          </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-            Actual photos from Comfort Technical Services jobs in Pune & PCMC.
-          </p>
-        </motion.div>
-
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12 md:mb-16 max-w-4xl mx-auto">
-          {gallery.map((img, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
+        {/* Gallery + Stats Row */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-8 md:mb-10">
+          {/* Gallery */}
+          <div className="lg:col-span-2">
+            <motion.div 
+              className="mb-4"
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="relative overflow-hidden rounded-xl border border-border/60 aspect-[4/3] cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.03]"
+              transition={{ duration: 0.5 }}
             >
-              <img 
-                src={img.src} 
-                alt={img.alt} 
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+              <h2 className="section-heading">Our Work</h2>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Actual photos from our jobs in Pune & PCMC
+              </p>
             </motion.div>
-          ))}
+
+            <div className="grid grid-cols-2 gap-2">
+              {gallery.map((img, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
+                  className="relative overflow-hidden rounded-lg border border-border/50 aspect-[4/3] group cursor-pointer"
+                >
+                  <img 
+                    src={img.src} 
+                    alt={img.alt} 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-all duration-300 flex items-center justify-center">
+                    <span className="text-primary-foreground text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                      {img.label}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats */}
+          <motion.div 
+            className="rounded-xl p-4 md:p-6 bg-gradient-stats text-primary-foreground flex flex-col justify-center"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h3 className="text-lg font-bold mb-4 text-center">Our Numbers</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  className="text-center"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <div className="text-2xl md:text-3xl font-bold">
+                    {stat.isDecimal ? (
+                      <span>{stat.value}{stat.suffix}</span>
+                    ) : (
+                      <AnimatedCounter value={stat.value} suffix={stat.suffix} duration={1500} />
+                    )}
+                  </div>
+                  <p className="text-xs opacity-90">{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
-        {/* Stats Section */}
+        {/* Testimonials */}
         <motion.div 
-          className="bg-primary/5 rounded-2xl p-6 md:p-10 mb-12 md:mb-16 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
+          className="bg-card rounded-xl p-4 md:p-6 shadow-card"
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {stats.map((stat, index) => (
+          <h3 className="text-lg md:text-xl font-bold text-center mb-6 text-foreground">
+            What Our Customers Say
+          </h3>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+            {testimonials.map((testimonial, index) => (
               <motion.div
-                key={stat.label}
-                className="text-center"
+                key={testimonial.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1">
-                  {stat.isDecimal ? (
-                    <span>{stat.value}{stat.suffix}</span>
-                  ) : (
-                    <AnimatedCounter 
-                      value={stat.value} 
-                      suffix={stat.suffix} 
-                      duration={2000}
-                    />
-                  )}
-                </div>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  {stat.label}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Testimonials Section */}
-        <motion.div 
-          className="bg-background rounded-2xl p-6 md:p-10 max-w-5xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground">
-            What Our Customers Say
-          </h3>
-
-          {/* Testimonial Cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.15 }}
-              >
-                <Card className="p-5 md:p-6 h-full border border-border/60 hover:border-primary/30 hover:shadow-lg transition-all duration-200">
-                  {/* Stars */}
-                  <div className="flex gap-1 mb-3">
+                <Card className="p-4 h-full border border-border/60 hover:border-primary/30 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 relative">
+                  <Quote className="absolute top-3 right-3 w-6 h-6 text-primary/10" />
+                  
+                  <div className="flex gap-0.5 mb-2">
                     {[...Array(5)].map((_, j) => (
-                      <Star 
-                        key={j} 
-                        className="w-4 h-4 text-primary fill-primary" 
-                      />
+                      <Star key={j} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                     ))}
                   </div>
 
-                  {/* Testimonial Text */}
-                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                  <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
                     "{testimonial.text}"
                   </p>
 
-                  {/* Customer Info */}
-                  <div className="border-t border-border/60 pt-3">
-                    <p className="text-sm font-semibold text-foreground">
+                  <div className="border-t border-border/50 pt-2">
+                    <p className="text-xs font-semibold text-foreground">
                       {testimonial.name} · {testimonial.area}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {testimonial.service}
-                    </p>
+                    <p className="text-[10px] text-muted-foreground">{testimonial.service}</p>
                   </div>
                 </Card>
               </motion.div>
             ))}
           </div>
 
-          {/* Google Reviews Link */}
           <motion.div 
             className="text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
           >
             <Button 
               variant="outline"
-              size="lg"
-              className="border-2"
+              size="sm"
+              className="group"
               onClick={() => window.open('https://share.google/XSCTACp1FdcN3VrHi', '_blank')}
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              See more reviews on Google
+              <ExternalLink className="w-3.5 h-3.5 mr-1.5 group-hover:translate-x-0.5 transition-transform" />
+              See more on Google
             </Button>
           </motion.div>
         </motion.div>
