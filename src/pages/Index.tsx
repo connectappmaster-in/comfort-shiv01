@@ -1,21 +1,20 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Phone, MessageCircle, Award, Shield, Users, Clock, Mail, MapPin, Star, CheckCircle } from "lucide-react";
+import { Phone, MessageCircle, Mail, MapPin, CheckCircle, Shield, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import teamImage from "@/assets/team.jpg";
 import logo from "@/assets/logo.png";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import Services from "@/components/Services";
 import ServiceDetails from "@/components/ServiceDetails";
+import About from "@/components/About";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import HowItWorks from "@/components/HowItWorks";
 import AMCPlans from "@/components/AMCPlans";
 import GalleryTestimonials from "@/components/GalleryTestimonials";
 import MultiStepBookingForm from "@/components/MultiStepBookingForm";
-import { AnimatedCounter } from "@/hooks/use-counter-animation";
 const Index = () => {
   // Scroll to top on page load to ensure Home section is visible
   useEffect(() => {
@@ -122,23 +121,6 @@ const Index = () => {
     const message = `Hi Comfort Technical Services! I'm interested in ${serviceName}. Could you please provide more details about pricing and availability?`;
     window.open(createWhatsAppLink(message), '_blank');
   };
-  const values = [{
-    icon: <Award className="w-8 h-8" />,
-    title: "Quality Work",
-    desc: "7+ years of excellence"
-  }, {
-    icon: <Shield className="w-8 h-8" />,
-    title: "Honest Pricing",
-    desc: "Transparent, no hidden costs"
-  }, {
-    icon: <Users className="w-8 h-8" />,
-    title: "Trusted Team",
-    desc: "Experienced technicians"
-  }, {
-    icon: <Clock className="w-8 h-8" />,
-    title: "Quick Service",
-    desc: "Same/next-day availability"
-  }];
   return <div className="min-h-screen bg-background pt-16">
       <Navbar />
       
@@ -163,215 +145,8 @@ const Index = () => {
       {/* Gallery + Testimonials + Stats Section */}
       <GalleryTestimonials />
 
-      {/* About Us Section */}
-      <section id="about" className="py-5 md:py-20 bg-background">
-        <div className="container mx-auto px-2 md:px-4">
-          <motion.div {...fadeInUp} className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-4 md:mb-12">
-              <motion.h2 initial={{
-              opacity: 0,
-              y: 20
-            }} whileInView={{
-              opacity: 1,
-              y: 0
-            }} viewport={{
-              once: true
-            }} transition={{
-              duration: 0.6
-            }} className="text-lg md:text-3xl lg:text-4xl font-bold mb-1.5 md:mb-4 text-foreground">
-                About <span className="text-primary">Comfort Technical Services</span>
-              </motion.h2>
-              <motion.p initial={{
-              opacity: 0
-            }} whileInView={{
-              opacity: 1
-            }} viewport={{
-              once: true
-            }} transition={{
-              duration: 0.6,
-              delay: 0.2
-            }} className="text-xs md:text-base text-muted-foreground mb-1.5 md:mb-3">
-                Your trusted partner for professional air conditioning services in Pune & PCMC
-              </motion.p>
-              <motion.div initial={{
-              width: 0
-            }} whileInView={{
-              width: 96
-            }} viewport={{
-              once: true
-            }} transition={{
-              duration: 0.8,
-              delay: 0.3
-            }} className="h-0.5 md:h-1.5 bg-primary mx-auto rounded-full" />
-              <motion.p initial={{
-              opacity: 0
-            }} whileInView={{
-              opacity: 1
-            }} viewport={{
-              once: true
-            }} transition={{
-              duration: 0.6,
-              delay: 0.4
-            }} className="text-xs md:text-sm text-muted-foreground mt-2 md:mt-4">
-                Proprietor: <span className="font-semibold text-foreground">Sagar Shinde</span>
-              </motion.p>
-            </div>
-
-            {/* Our Story */}
-            <div className="grid md:grid-cols-2 gap-4 md:gap-16 mb-6 md:mb-20">
-              <motion.div {...fadeInLeft} className="space-y-2 md:space-y-6">
-                <h3 className="text-base md:text-3xl font-bold text-foreground mb-2 md:mb-6">Our Story</h3>
-                <p className="text-xs md:text-lg text-muted-foreground leading-relaxed">
-                  Comfort Technical Services has been providing professional AC services in the Pune region since 2018. Serving Pune with 7+ years of experience, delivering reliable installation, maintenance, and repair services with outstanding customer care.
-                </p>
-                <p className="text-xs md:text-lg text-muted-foreground leading-relaxed">
-                  We place a high priority on providing outstanding customer service through prompt and dependable repairs, open communication, and affordable prices.
-                </p>
-                <p className="text-xs md:text-lg text-muted-foreground leading-relaxed">
-                  We facilitate flawless living and operational excellence; we are more than just a repair service. We want to create long-lasting connections that endure by keeping the greatest standards of professionalism, ethics, and customer care.
-                </p>
-              </motion.div>
-
-              <motion.div {...fadeInRight}>
-                <motion.img src={teamImage} alt="Comfort Technical Services team" className="rounded-2xl shadow-2xl w-full object-cover h-[180px] md:h-[400px]" whileHover={{
-                scale: 1.03
-              }} transition={{
-                duration: 0.4
-              }} />
-              </motion.div>
-            </div>
-
-            {/* Journey Timeline */}
-            <motion.div {...fadeInUp} className="mb-6 md:mb-20">
-              <h3 className="text-base md:text-3xl font-bold text-center mb-5 md:mb-12 text-foreground">Our Journey</h3>
-              <motion.div {...staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
-                {[{
-                year: "2018",
-                title: "Foundation",
-                desc: "Started Comfort Technical Services in Pune with a vision to provide reliable AC services"
-              }, {
-                year: "2019",
-                title: "First 500 Customers",
-                desc: "Reached our first 500 satisfied customers and expanded service coverage across Pune"
-              }, {
-                year: "2020",
-                title: "GST Registration",
-                desc: "Became a registered GST business, offering professional invoices to all customers"
-              }, {
-                year: "2021",
-                title: "PCMC Expansion",
-                desc: "Extended services to PCMC area including Akurdi, Chinchwad, and surrounding regions"
-              }, {
-                year: "2023",
-                title: "10,000+ Services",
-                desc: "Crossed the milestone of 10,000+ AC units serviced with 5-star customer ratings"
-              }, {
-                year: "2024",
-                title: "AMC Programs",
-                desc: "Launched comprehensive Annual Maintenance Contract programs for homes and businesses"
-              }].map((milestone, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-                y: -8
-              }} transition={{
-                duration: 0.3
-              }}>
-                    <Card className="p-3 md:p-6 h-full border-2 hover:border-primary/40 hover:shadow-lg transition-all">
-                      <div className="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
-                        <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-xs md:text-lg font-bold text-primary">{milestone.year}</span>
-                        </div>
-                      </div>
-                      <h4 className="text-sm md:text-lg font-bold mb-1.5 md:mb-3 text-foreground">{milestone.title}</h4>
-                      <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed">{milestone.desc}</p>
-                    </Card>
-                  </motion.div>)}
-              </motion.div>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-8 mb-6 md:mb-20" {...staggerContainer}>
-              {[{
-              label: "Years Experience",
-              value: 7,
-              suffix: "+"
-            }, {
-              label: "AC Units Serviced",
-              value: 10000,
-              suffix: "+"
-            }, {
-              label: "Google Reviews",
-              value: 57,
-              suffix: "+"
-            }, {
-              label: "Google Rating",
-              value: 5.0,
-              suffix: "/5",
-              isDecimal: true
-            }].map((stat, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-              scale: 1.05,
-              y: -8
-            }} transition={{
-              duration: 0.3
-            }}>
-                  <Card className="p-3 md:p-8 text-center border-2 border-primary/20 hover:border-primary/40 hover:shadow-xl transition-all">
-                    <motion.p className="text-lg md:text-4xl lg:text-5xl font-bold text-primary mb-1.5 md:mb-3" initial={{
-                  scale: 0.5,
-                  opacity: 0
-                }} whileInView={{
-                  scale: 1,
-                  opacity: 1
-                }} viewport={{
-                  once: true
-                }} transition={{
-                  duration: 0.5,
-                  delay: i * 0.1
-                }}>
-                      <AnimatedCounter value={stat.value} suffix={stat.suffix} duration={2000} className={stat.isDecimal ? "inline-block" : ""} />
-                    </motion.p>
-                    <p className="text-[10px] md:text-base text-muted-foreground font-semibold">{stat.label}</p>
-                  </Card>
-                </motion.div>)}
-            </motion.div>
-
-            {/* Core Values */}
-            <motion.div {...fadeInUp}>
-              <h3 className="text-base md:text-3xl font-bold text-center mb-5 md:mb-12 text-foreground">Our Core Values</h3>
-              <motion.div {...staggerContainer} className="grid md:grid-cols-3 gap-2 md:gap-8">
-                {[{
-                icon: <Award className="w-5 h-5 md:w-8 md:h-8" />,
-                title: "Quality First",
-                desc: "We never compromise on the quality of our work. Every service is performed with precision and care."
-              }, {
-                icon: <Users className="w-5 h-5 md:w-8 md:h-8" />,
-                title: "Customer Focused",
-                desc: "Your satisfaction is our priority. We listen to your needs and provide tailored solutions."
-              }, {
-                icon: <Shield className="w-5 h-5 md:w-8 md:h-8" />,
-                title: "Transparency",
-                desc: "Honest pricing, clear communication, and no hidden charges."
-              }].map((value, i) => <motion.div key={i} {...fadeInScale} whileHover={{
-                y: -8,
-                scale: 1.03
-              }} transition={{
-                duration: 0.3
-              }}>
-                    <Card className="p-3 md:p-8 text-center h-full border-2 hover:border-primary/40 hover:shadow-xl transition-all">
-                      <motion.div className="w-10 h-10 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2 md:mb-6 text-primary" whileHover={{
-                    rotate: 360
-                  }} transition={{
-                    duration: 0.6
-                  }}>
-                        {value.icon}
-                      </motion.div>
-                      <h4 className="text-sm md:text-xl font-bold mb-2 md:mb-4 text-foreground">{value.title}</h4>
-                      <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed">{value.desc}</p>
-                    </Card>
-                  </motion.div>)}
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      {/* About Section */}
+      <About />
 
       {/* Service Area + Booking Section - Side by Side */}
       <section className="py-5 md:py-16 bg-background">
