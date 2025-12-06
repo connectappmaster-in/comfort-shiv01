@@ -1,125 +1,85 @@
 import { motion } from "framer-motion";
-import { MapPin, CheckCircle } from "lucide-react";
+import { MapPin, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 const ServiceAreaMap = () => {
-  const fadeInUp = {
-    initial: {
-      opacity: 0,
-      y: 30
-    },
-    whileInView: {
-      opacity: 1,
-      y: 0
-    },
-    viewport: {
-      once: true
-    },
-    transition: {
-      duration: 0.6
-    }
+  const serviceAreas = [
+    "Aundh", "Wakad", "Hinjewadi", "Pimple Saudagar", "Pimpri", "Chinchwad",
+    "Kharadi", "Viman Nagar", "Baner", "Pimple Nilakh", "Rahatani", "Thergaon",
+    "Kasarwadi", "Akurdi", "Nigdi", "Bhosari"
+  ];
+
+  const createWhatsAppLink = () => {
+    return `https://wa.me/917745046520?text=${encodeURIComponent("Hi! My area is not listed on your website. Can you check if you provide service here?")}`;
   };
-  const serviceAreas = [{
-    name: "Aundh",
-    popular: true
-  }, {
-    name: "Wakad",
-    popular: true
-  }, {
-    name: "Hinjewadi",
-    popular: true
-  }, {
-    name: "Pimple Saudagar",
-    popular: true
-  }, {
-    name: "Pimpri",
-    popular: true
-  }, {
-    name: "Chinchwad",
-    popular: true
-  }, {
-    name: "Kharadi",
-    popular: false
-  }, {
-    name: "Viman Nagar",
-    popular: false
-  }, {
-    name: "Baner",
-    popular: false
-  }, {
-    name: "Pimple Nilakh",
-    popular: false
-  }, {
-    name: "Rahatani",
-    popular: false
-  }, {
-    name: "Thergaon",
-    popular: false
-  }, {
-    name: "Kasarwadi",
-    popular: false
-  }, {
-    name: "Akurdi",
-    popular: false
-  }, {
-    name: "Nigdi",
-    popular: false
-  }, {
-    name: "Bhosari",
-    popular: false
-  }];
-  return <section className="py-12 md:py-20 bg-muted">
-      <div className="container mx-auto px-4">
-        <motion.div {...fadeInUp} className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4 text-foreground">
-            Service Coverage Area
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground">
-            We serve all major areas in Pune & PCMC
-          </p>
-        </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
-          {/* Google Map */}
-          <motion.div {...fadeInUp}>
-            
-          </motion.div>
-
-          {/* Areas List */}
-          <motion.div {...fadeInUp} className="space-y-6">
-            <Card className="p-6 md:p-8 bg-background border-border">
-              <h3 className="text-xl md:text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
-                <MapPin className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                Areas We Cover
-              </h3>
-              <div className="grid grid-cols-2 gap-3 md:gap-4">
-                {serviceAreas.map((area, i) => <motion.div key={i} initial={{
-                opacity: 0,
-                x: -20
-              }} whileInView={{
-                opacity: 1,
-                x: 0
-              }} viewport={{
-                once: true
-              }} transition={{
-                delay: i * 0.05
-              }} whileHover={{
-                x: 5,
-                transition: {
-                  duration: 0.2
-                }
-              }} className="flex items-center gap-2 cursor-pointer group">
-                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm md:text-base font-semibold text-primary group-hover:text-primary/80 transition-colors">
-                      {area.name}
-                    </span>
-                  </motion.div>)}
-              </div>
-            </Card>
-
-            
-          </motion.div>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="p-5 md:p-6 bg-card border border-border/60">
+        <div className="flex items-center gap-2 mb-4">
+          <MapPin className="w-5 h-5 text-primary" />
+          <h3 className="text-lg md:text-xl font-bold text-foreground">
+            Areas We Cover
+          </h3>
         </div>
-      </div>
-    </section>;
+
+        {/* Desktop: Multi-column pills */}
+        <div className="hidden sm:flex flex-wrap gap-2 mb-5">
+          {serviceAreas.map((area, index) => (
+            <motion.span
+              key={area}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: index * 0.03 }}
+              className="px-3 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full border border-primary/20 hover:bg-primary/20 transition-colors cursor-default"
+            >
+              {area}
+            </motion.span>
+          ))}
+        </div>
+
+        {/* Mobile: Single column list */}
+        <div className="sm:hidden space-y-2 mb-5">
+          {serviceAreas.map((area, index) => (
+            <motion.div
+              key={area}
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: index * 0.02 }}
+              className="flex items-center gap-2 text-sm text-foreground"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
+              {area}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Note */}
+        <div className="bg-muted/50 rounded-lg p-3 border border-border/40">
+          <p className="text-xs md:text-sm text-muted-foreground mb-3">
+            If your area is not listed, please WhatsApp us – we may still be able to serve you.
+          </p>
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
+            onClick={() => window.open(createWhatsAppLink(), '_blank')}
+          >
+            <MessageCircle className="w-3 h-3 mr-1.5" />
+            Check My Area
+          </Button>
+        </div>
+      </Card>
+    </motion.div>
+  );
 };
+
 export default ServiceAreaMap;

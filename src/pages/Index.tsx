@@ -164,30 +164,7 @@ const Index = () => {
                   </p>
                 </div>
                 
-                <Card className="p-2 md:p-4 bg-muted border-border mb-2 md:mb-4">
-                  <h3 className="text-sm md:text-xl font-bold mb-1.5 md:mb-3 text-foreground flex items-center gap-1 md:gap-2">
-                    <MapPin className="w-3 h-3 md:w-5 md:h-5 text-primary" />
-                    Areas We Cover
-                  </h3>
-                  <div className="grid grid-cols-2 gap-1 md:gap-2">
-                    {["Aundh", "Wakad", "Hinjewadi", "Pimple Saudagar", "Pimpri", "Chinchwad", "Kharadi", "Viman Nagar", "Baner", "Pimple Nilakh", "Rahatani", "Thergaon", "Kasarwadi", "Akurdi", "Nigdi", "Bhosari"].map((area, i) => <motion.div key={i} initial={{
-                    opacity: 0,
-                    x: -20
-                  }} whileInView={{
-                    opacity: 1,
-                    x: 0
-                  }} viewport={{
-                    once: true
-                  }} transition={{
-                    delay: i * 0.03
-                  }} className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="text-sm font-medium text-primary">
-                          {area}
-                        </span>
-                      </motion.div>)}
-                  </div>
-                </Card>
+                <ServiceAreaMap />
               </Card>
             </motion.div>
 
@@ -215,13 +192,13 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-12 mb-4 md:mb-10">
             {/* Company Info */}
             <div className="lg:col-span-4">
-              <img src={logo} alt="CTS Logo" className="w-12 h-12 md:w-24 md:h-24 object-contain opacity-90 mb-2 md:mb-5" />
-              <h3 className="text-sm md:text-2xl font-bold mb-2 md:mb-4 opacity-95">Comfort Technical Services</h3>
-              <p className="text-xs md:text-base opacity-80 leading-relaxed mb-2 md:mb-5">
-                Professional AC servicing, repair, and maintenance since 2018. Serving Pune and PCMC with excellence for over 7 years.
+              <img src={logo} alt="CTS Logo" className="w-12 h-12 md:w-20 md:h-20 object-contain opacity-90 mb-2 md:mb-4" />
+              <h3 className="text-sm md:text-xl font-bold mb-1 md:mb-2 opacity-95">Comfort Technical Services</h3>
+              <p className="text-xs md:text-sm opacity-70 mb-3 md:mb-4 italic">
+                Pune & PCMC's dedicated AC partner since 2018.
               </p>
               <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm opacity-75">
-                <Shield className="w-3 h-3 md:w-5 md:h-5" />
+                <Shield className="w-3 h-3 md:w-4 md:h-4" />
                 <span>GSTIN: 27HEKPS5234F1Z4</span>
               </div>
             </div>
