@@ -14,6 +14,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import Services from "@/components/Services";
+import ServiceDetails from "@/components/ServiceDetails";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import MultiStepBookingForm from "@/components/MultiStepBookingForm";
 import { AnimatedCounter } from "@/hooks/use-counter-animation";
@@ -184,6 +185,9 @@ const Index = () => {
 
       {/* Services Section */}
       <Services />
+
+      {/* Service Details Section */}
+      <ServiceDetails />
 
       {/* How It Works Section */}
       <section className="py-5 md:py-20 bg-accent">

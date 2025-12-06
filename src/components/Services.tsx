@@ -3,200 +3,179 @@ import { Card } from "@/components/ui/card";
 import { CheckCircle, Wrench, Sparkles, Wind, Hammer, Settings, FileText } from "lucide-react";
 
 const Services = () => {
-  const createWhatsAppLink = (message: string) => {
-    return `https://wa.me/917745046520?text=${encodeURIComponent(message)}`;
-  };
-
-  const handleServiceClick = (serviceName: string) => {
-    const message = `Hi Comfort Technical Services! I'm interested in ${serviceName}. Could you please provide more details about pricing and availability?`;
-    window.open(createWhatsAppLink(message), '_blank');
-  };
-
   const services = [
     {
+      id: "ac-servicing",
       name: "AC Servicing",
+      tagline: "Regular maintenance to keep your AC cooling efficiently.",
       desc: [
-        "Filter cleaning & replacement",
+        "Filter cleaning & wash",
         "Coil inspection & cleaning",
-        "Refrigerant level check",
-        "Performance optimization"
+        "Refrigerant level check"
       ],
       price: "₹399",
-      icon: Wrench,
-      iconBg: "#E3F2FD",
-      iconColor: "#1976D2"
+      icon: Wrench
     },
     {
+      id: "deep-cleaning",
       name: "Deep Cleaning",
+      tagline: "Thorough internal cleaning for better cooling and hygiene.",
       desc: [
         "Complete internal cleaning",
         "Coil sanitization",
-        "Drain pipe cleaning",
         "Anti-bacterial treatment"
       ],
       price: "₹599",
-      icon: Sparkles,
-      iconBg: "#E8F5E9",
-      iconColor: "#388E3C"
+      icon: Sparkles
     },
     {
+      id: "gas-refill",
       name: "Gas Refill",
+      tagline: "Leak check and proper gas charging for low-cooling units.",
       desc: [
         "Leak detection & repair",
         "R32/R410A gas refill",
-        "Pressure testing",
-        "Performance verification"
+        "Pressure testing"
       ],
       price: "₹2,500",
-      icon: Wind,
-      iconBg: "#FFF3E0",
-      iconColor: "#F57C00"
+      icon: Wind
     },
     {
+      id: "ac-repair",
       name: "AC Repair",
+      tagline: "Fault finding and repair for all major AC brands.",
       desc: [
-        "Compressor repair/replacement",
+        "Compressor troubleshooting",
         "PCB & circuit repairs",
-        "Sensor troubleshooting",
         "All brand expertise"
       ],
       price: "Based on issue",
-      icon: Hammer,
-      iconBg: "#FFEBEE",
-      iconColor: "#D32F2F"
+      icon: Hammer
     },
     {
+      id: "ac-installation",
       name: "AC Installation",
+      tagline: "Proper indoor and outdoor unit installation with testing.",
       desc: [
         "Professional mounting",
-        "Copper piping work",
-        "Electrical wiring",
+        "Copper piping & wiring",
         "Gas charging & testing"
       ],
       price: "₹1,500",
-      icon: Settings,
-      iconBg: "#F3E5F5",
-      iconColor: "#7B1FA2"
+      icon: Settings
     },
     {
+      id: "amc-plans",
       name: "AMC Plans",
+      tagline: "Scheduled visits and priority support for homes and businesses.",
       desc: [
-        "Scheduled maintenance",
-        "Priority service",
-        "Discounted repairs",
-        "Extended warranty"
+        "Scheduled maintenance visits",
+        "Priority service calls",
+        "Discounted repairs"
       ],
       price: "Custom pricing",
-      icon: FileText,
-      iconBg: "#E0F2F1",
-      iconColor: "#00897B"
+      icon: FileText
     }
   ];
 
-  const fadeInScale = {
-    initial: { opacity: 0, scale: 0.95 },
-    whileInView: { opacity: 1, scale: 1 },
-    viewport: { once: true, margin: "-50px" },
-    transition: { duration: 0.5 }
-  };
-
-  const staggerContainer = {
-    initial: {},
-    whileInView: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    },
-    viewport: { once: true, margin: "-50px" }
+  const scrollToDetail = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
-    <section id="services" className="py-5 md:py-20 bg-background">
-      <div className="container mx-auto px-2 md:px-4">
+    <section id="services" className="py-12 md:py-20 bg-background">
+      <div className="container mx-auto px-4">
         {/* Section Heading */}
         <motion.div 
-          className="text-center mb-4 md:mb-12"
+          className="text-center mb-8 md:mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-lg md:text-3xl lg:text-4xl font-bold mb-1.5 md:mb-4 text-foreground">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-foreground">
             Our Services
           </h2>
-          <p className="text-xs md:text-base text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive AC solutions for homes and businesses
+          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
+            Comprehensive AC solutions for homes and businesses across Pune & PCMC
           </p>
         </motion.div>
 
         {/* Services Grid */}
         <motion.div 
-          {...staggerContainer}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 md:gap-2 max-w-[1000px] mx-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
         >
-          {services.map((service, i) => {
+          {services.map((service) => {
             const IconComponent = service.icon;
             
             return (
               <motion.div
-                key={i}
-                {...fadeInScale}
-                whileHover={{ 
-                  scale: 1.05
+                key={service.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 }
                 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="group"
+                transition={{ duration: 0.4 }}
               >
                 <Card 
-                  className="p-1.5 md:p-3 cursor-pointer transition-all duration-300 h-full flex flex-col hover:shadow-lg hover:scale-105 hover:bg-accent/50 border hover:border-primary/20"
-                  onClick={() => handleServiceClick(service.name)}
+                  className="p-5 md:p-6 h-full flex flex-col border border-border/60 rounded-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-primary/30 bg-card"
                 >
-                  {/* Icon with colored background */}
-                  <div className="flex justify-center mb-1 md:mb-1.5">
-                    <div 
-                      className="w-6 h-6 md:w-8 md:h-8 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
-                      style={{ backgroundColor: service.iconBg }}
-                    >
-                      <IconComponent 
-                        className="w-3 h-3 md:w-4 md:h-4" 
-                        style={{ color: service.iconColor }}
-                      />
+                  {/* Icon */}
+                  <div className="mb-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <IconComponent className="w-6 h-6 text-primary" />
                     </div>
                   </div>
 
                   {/* Service Name */}
-                  <h3 className="text-[11px] md:text-sm font-bold mb-0.5 md:mb-1 text-center text-foreground">
+                  <h3 className="text-lg font-bold mb-2 text-foreground">
                     {service.name}
                   </h3>
 
+                  {/* Tagline */}
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {service.tagline}
+                  </p>
+
                   {/* Price */}
-                  <div className="text-center mb-1 md:mb-1.5">
-                    <p className="text-[8px] md:text-[10px] text-muted-foreground mb-0">Starting from</p>
-                    <p className="text-[11px] md:text-sm font-bold text-primary">
+                  <div className="mb-4">
+                    <p className="text-xs text-muted-foreground">Starting from</p>
+                    <p className="text-lg font-bold text-primary">
                       {service.price}
                     </p>
                   </div>
 
                   {/* Features List */}
-                  <ul className="space-y-0 md:space-y-1 mb-1 md:mb-2 flex-grow">
+                  <ul className="space-y-2 mb-4 flex-grow">
                     {service.desc.map((point, j) => (
                       <li 
                         key={j} 
-                        className="flex items-start text-[8px] md:text-xs text-muted-foreground leading-tight"
+                        className="flex items-start text-sm text-muted-foreground"
                       >
-                        <CheckCircle className="w-2 h-2 md:w-3 md:h-3 mr-0.5 md:mr-1 flex-shrink-0 mt-0.5" style={{ color: service.iconColor }} />
+                        <CheckCircle className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5 text-primary" />
                         {point}
                       </li>
                     ))}
                   </ul>
 
-                  {/* CTA Button */}
+                  {/* Learn More Link */}
                   <button 
-                    className="text-[9px] md:text-xs font-semibold transition-all duration-300 mt-auto text-center w-full py-0.5 text-primary hover:text-primary/80 group-hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleServiceClick(service.name);
-                    }}
+                    className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors duration-200 text-left mt-auto"
+                    onClick={() => scrollToDetail(service.id)}
                   >
                     Learn More →
                   </button>
