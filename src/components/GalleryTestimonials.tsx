@@ -78,6 +78,7 @@ const GalleryTestimonials = () => {
                 src={img.src} 
                 alt={img.alt} 
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </motion.div>
           ))}

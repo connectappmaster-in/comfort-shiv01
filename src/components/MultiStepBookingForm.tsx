@@ -11,26 +11,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Check, CalendarIcon, Loader2, MessageCircle, ArrowRight, ArrowLeft } from "lucide-react";
+import { Check, CalendarIcon, Loader2, MessageCircle, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string()
-    .min(3, "Name must be at least 3 characters")
-    .regex(/^[a-zA-Z\s]+$/, "Name must contain only letters and spaces"),
+    .min(2, "Please enter your name")
+    .max(100, "Name is too long")
+    .regex(/^[a-zA-Z\s]+$/, "Name should only contain letters"),
   phone: z.string()
-    .regex(/^(\+91)?[6-9]\d{9}$/, "Please enter a valid 10-digit Indian phone number"),
+    .regex(/^(\+91)?[6-9]\d{9}$/, "Please enter a valid 10-digit mobile number"),
   service: z.string()
     .min(1, "Please select a service"),
+  acType: z.string().optional(),
   date: z.date().optional().refine((date) => {
     if (!date) return true;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return date >= today;
-  }, "Date must be today or in the future"),
+  }, "Please select today or a future date"),
+  timeSlot: z.string().optional(),
+  address: z.string()
+    .max(300, "Address is too long")
+    .optional(),
+  area: z.string().optional(),
   message: z.string()
-    .max(500, "Message must be less than 500 characters")
+    .max(500, "Message is too long")
     .optional()
 });
 
@@ -45,9 +51,26 @@ const serviceOptions = [
   { name: "AMC Plans", icon: "📋" }
 ];
 
+const acTypes = ["Split AC", "Window AC", "Cassette AC", "Tower AC", "Other"];
+const timeSlots = ["Morning (9-12)", "Afternoon (12-3)", "Evening (3-7)", "Flexible"];
+const areas = [
+  "Aundh", "Wakad", "Hinjewadi", "Pimple Saudagar", "Pimpri", "Chinchwad",
+  "Kharadi", "Viman Nagar", "Baner", "Pimple Nilakh", "Rahatani", "Thergaon",
+  "Kasarwadi", "Akurdi", "Nigdi", "Bhosari", "Other"
+];
+
+const stepLabels = [
+  "Your Details",
+  "Service & AC Details", 
+  "Preferred Date & Time",
+  "Address & Area",
+  "Review & Submit"
+];
+
 const MultiStepBookingForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,7 +78,11 @@ const MultiStepBookingForm = () => {
       name: "",
       phone: "",
       service: "",
+      acType: "",
       date: undefined,
+      timeSlot: "",
+      address: "",
+      area: "",
       message: ""
     },
     mode: "onChange"
@@ -67,56 +94,39 @@ const MultiStepBookingForm = () => {
 
   const handleFormSubmit = async (data: FormValues) => {
     if (!data.name || !data.phone || !data.service) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in Name, Phone, and Service fields.",
-        variant: "destructive",
-        duration: 3000,
-      });
       return;
     }
 
     setIsSubmitting(true);
     
-    const whatsappMessage = `🔧 New Service Booking Request\n\n` + 
+    const whatsappMessage = `🔧 New Service Booking\n\n` + 
       `Name: ${data.name}\n` + 
       `Phone: ${data.phone}\n` + 
       `Service: ${data.service}\n` + 
-      `Preferred Date: ${data.date ? format(data.date, "dd-MMM-yyyy") : "Not specified"}\n` + 
-      `Message: ${data.message || "No additional message"}`;
+      `AC Type: ${data.acType || "Not specified"}\n` +
+      `Date: ${data.date ? format(data.date, "dd-MMM-yyyy") : "Not specified"}\n` + 
+      `Time: ${data.timeSlot || "Not specified"}\n` +
+      `Area: ${data.area || "Not specified"}\n` +
+      `Address: ${data.address || "Not specified"}\n` +
+      `Notes: ${data.message || "None"}`;
     
     setTimeout(() => {
       window.open(createWhatsAppLink(whatsappMessage), '_blank');
-      
-      toast({
-        title: "Success!",
-        description: "Opening WhatsApp with your booking details...",
-        duration: 3000,
-      });
-
       setIsSubmitting(false);
-      
-      setTimeout(() => {
-        form.reset();
-        setCurrentStep(1);
-      }, 1000);
+      setIsSubmitted(true);
     }, 500);
   };
 
   const goToNextStep = async () => {
-    let isValid = false;
+    let isValid = true;
     
     if (currentStep === 1) {
-      isValid = await form.trigger("name");
+      isValid = await form.trigger(["name", "phone"]);
     } else if (currentStep === 2) {
-      isValid = await form.trigger("phone");
-    } else if (currentStep === 3) {
       isValid = await form.trigger("service");
-    } else if (currentStep === 4) {
-      isValid = await form.trigger("date");
     }
     
-    if (isValid) {
+    if (isValid && currentStep < 5) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -127,326 +137,377 @@ const MultiStepBookingForm = () => {
     }
   };
 
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 50 : -50,
-      opacity: 0
-    }),
-    center: {
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 50 : -50,
-      opacity: 0
-    })
+  const resetForm = () => {
+    form.reset();
+    setCurrentStep(1);
+    setIsSubmitted(false);
   };
 
+  const slideVariants = {
+    enter: { x: 30, opacity: 0 },
+    center: { x: 0, opacity: 1 },
+    exit: { x: -30, opacity: 0 }
+  };
+
+  // Success State
+  if (isSubmitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center py-8 space-y-4"
+      >
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+          <CheckCircle className="w-8 h-8 text-primary" />
+        </div>
+        <h3 className="text-lg md:text-xl font-bold text-foreground">
+          Thank you for booking!
+        </h3>
+        <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+          We'll call or WhatsApp you soon to confirm your service.
+        </p>
+        <Button variant="outline" size="sm" onClick={resetForm} className="mt-4">
+          Book Another Service
+        </Button>
+      </motion.div>
+    );
+  }
+
   return (
-    <div className="space-y-3 md:space-y-6">
-      {/* Modern Progress Indicator */}
-      <div className="flex items-center justify-between mb-1 md:mb-2">
-        {[1, 2, 3, 4, 5].map((step, idx) => (
-          <div key={step} className="flex items-center flex-1 last:flex-none">
-            <div className="flex flex-col items-center gap-1 md:gap-2 flex-1">
-              <motion.div
-                initial={false}
-                animate={{
-                  scale: step === currentStep ? 1.1 : 1,
-                  backgroundColor: step <= currentStep ? "hsl(var(--primary))" : "hsl(var(--muted))"
-                }}
-                className={cn(
-                  "w-5 h-5 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold transition-all",
-                  step <= currentStep ? "text-primary-foreground shadow-md" : "text-muted-foreground"
-                )}
-              >
-                {step < currentStep ? <Check className="w-2 h-2 md:w-4 md:h-4" /> : step}
-              </motion.div>
-            </div>
-            {idx < 4 && (
-              <div className={cn(
-                "h-0.5 flex-1 transition-all duration-300 mx-0.5 md:mx-1",
-                step < currentStep ? "bg-primary" : "bg-muted"
-              )} />
+    <div className="space-y-4">
+      {/* Step Indicator */}
+      <div className="text-center mb-2">
+        <p className="text-xs text-muted-foreground">
+          Step {currentStep} of 5: <span className="font-medium text-foreground">{stepLabels[currentStep - 1]}</span>
+        </p>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="flex items-center gap-1 mb-4">
+        {[1, 2, 3, 4, 5].map((step) => (
+          <div
+            key={step}
+            className={cn(
+              "h-1 flex-1 rounded-full transition-all duration-300",
+              step <= currentStep ? "bg-primary" : "bg-muted"
             )}
-          </div>
+          />
         ))}
       </div>
 
+      {/* Helper Text */}
+      <p className="text-xs text-muted-foreground text-center mb-4">
+        Fill this quick form; we usually respond within 15–30 minutes during working hours.
+      </p>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-3 md:space-y-6">
-          <div className="min-h-[120px] md:min-h-[180px]">
-            <AnimatePresence mode="wait" custom={1}>
-              {/* Step 1: Name */}
+        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+          <div className="min-h-[180px]">
+            <AnimatePresence mode="wait">
+              {/* Step 1: Your Details */}
               {currentStep === 1 && (
                 <motion.div
                   key="step1"
-                  custom={1}
                   variants={slideVariants}
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="space-y-2 md:space-y-3"
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
                 >
-                  <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-4">
-                    <div className="w-0.5 md:w-1 h-4 md:h-6 bg-primary rounded-full" />
-                    <h4 className="text-xs md:text-lg font-semibold text-foreground">Your Name</h4>
-                  </div>
                   <FormField
                     control={form.control}
                     name="name"
                     render={({ field, fieldState }) => (
                       <FormItem>
+                        <label className="text-xs font-medium text-foreground">Your Name *</label>
                         <FormControl>
-                          <div className="relative">
-                            <Input 
-                              placeholder="Enter your full name" 
-                              {...field} 
-                              className={cn(
-                                "text-xs md:text-sm h-8 md:h-11 pl-2 md:pl-4 pr-8 md:pr-10 rounded-lg border-2 transition-all",
-                                fieldState.error && "border-destructive",
-                                !fieldState.error && field.value && field.value.length >= 3 && "border-primary bg-primary/5"
-                              )}
-                              autoFocus
-                            />
-                            {!fieldState.error && field.value && field.value.length >= 3 && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2"
-                              >
-                                <Check className="w-3 h-3 md:w-4 md:h-4 text-primary" />
-                              </motion.div>
+                          <Input 
+                            placeholder="Enter your full name" 
+                            {...field} 
+                            className={cn(
+                              "h-10 text-sm",
+                              fieldState.error && "border-destructive"
                             )}
-                          </div>
+                          />
                         </FormControl>
-                        <FormMessage className="text-[10px] md:text-xs" />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-                </motion.div>
-              )}
-
-              {/* Step 2: Phone */}
-              {currentStep === 2 && (
-                <motion.div
-                  key="step2"
-                  custom={1}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="space-y-2 md:space-y-3"
-                >
-                  <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-4">
-                    <div className="w-0.5 md:w-1 h-4 md:h-6 bg-primary rounded-full" />
-                    <h4 className="text-xs md:text-lg font-semibold text-foreground">Phone Number</h4>
-                  </div>
                   <FormField
                     control={form.control}
                     name="phone"
                     render={({ field, fieldState }) => (
                       <FormItem>
+                        <label className="text-xs font-medium text-foreground">Phone Number *</label>
                         <FormControl>
-                          <div className="relative">
-                            <Input 
-                              placeholder="Enter 10-digit mobile number" 
-                              type="tel"
-                              {...field} 
-                              className={cn(
-                                "text-xs md:text-sm h-8 md:h-11 pl-2 md:pl-4 pr-8 md:pr-10 rounded-lg border-2 transition-all",
-                                fieldState.error && "border-destructive",
-                                !fieldState.error && field.value && /^(\+91)?[6-9]\d{9}$/.test(field.value) && "border-primary bg-primary/5"
-                              )}
-                              autoFocus
-                            />
-                            {!fieldState.error && field.value && /^(\+91)?[6-9]\d{9}$/.test(field.value) && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2"
-                              >
-                                <Check className="w-3 h-3 md:w-4 md:h-4 text-primary" />
-                              </motion.div>
+                          <Input 
+                            placeholder="10-digit mobile number" 
+                            type="tel"
+                            {...field} 
+                            className={cn(
+                              "h-10 text-sm",
+                              fieldState.error && "border-destructive"
                             )}
-                          </div>
+                          />
                         </FormControl>
-                        <FormMessage className="text-[10px] md:text-xs" />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
                 </motion.div>
               )}
 
-              {/* Step 3: Service */}
-              {currentStep === 3 && (
+              {/* Step 2: Service & AC Details */}
+              {currentStep === 2 && (
                 <motion.div
-                  key="step3"
-                  custom={1}
+                  key="step2"
                   variants={slideVariants}
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="space-y-2 md:space-y-3"
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
                 >
-                  <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-4">
-                    <div className="w-0.5 md:w-1 h-4 md:h-6 bg-primary rounded-full" />
-                    <h4 className="text-xs md:text-lg font-semibold text-foreground">Select Service</h4>
-                  </div>
                   <FormField
                     control={form.control}
                     name="service"
                     render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormControl>
-                          <div className="relative">
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger 
-                                className={cn(
-                                  "text-xs md:text-sm h-8 md:h-11 rounded-lg border-2 transition-all",
-                                  fieldState.error && "border-destructive",
-                                  !fieldState.error && field.value && "border-primary bg-primary/5"
-                                )}
-                              >
-                                <SelectValue placeholder="Choose a service" />
-                              </SelectTrigger>
-                              <SelectContent className="pointer-events-auto">
-                                {serviceOptions.map((service, i) => (
-                                  <SelectItem key={i} value={service.name} className="text-xs md:text-sm">
-                                    <span className="flex items-center gap-1 md:gap-2">
-                                      <span>{service.icon}</span>
-                                      <span>{service.name}</span>
-                                    </span>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            {!fieldState.error && field.value && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="absolute right-8 md:right-10 top-1/2 -translate-y-1/2 pointer-events-none"
-                              >
-                                <Check className="w-3 h-3 md:w-4 md:h-4 text-primary" />
-                              </motion.div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage className="text-[10px] md:text-xs" />
+                        <label className="text-xs font-medium text-foreground">Service Needed *</label>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className={cn("h-10 text-sm", fieldState.error && "border-destructive")}>
+                              <SelectValue placeholder="Select a service" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {serviceOptions.map((service) => (
+                              <SelectItem key={service.name} value={service.name} className="text-sm">
+                                {service.icon} {service.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="acType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <label className="text-xs font-medium text-foreground">AC Type (Optional)</label>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-10 text-sm">
+                              <SelectValue placeholder="Select AC type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {acTypes.map((type) => (
+                              <SelectItem key={type} value={type} className="text-sm">
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormItem>
                     )}
                   />
                 </motion.div>
               )}
 
-              {/* Step 4: Date */}
-              {currentStep === 4 && (
+              {/* Step 3: Date & Time */}
+              {currentStep === 3 && (
                 <motion.div
-                  key="step4"
-                  custom={1}
+                  key="step3"
                   variants={slideVariants}
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="space-y-2 md:space-y-3"
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
                 >
-                  <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-4">
-                    <div className="w-0.5 md:w-1 h-4 md:h-6 bg-primary rounded-full" />
-                    <h4 className="text-xs md:text-lg font-semibold text-foreground">Preferred Date <span className="text-[10px] md:text-xs text-muted-foreground font-normal">(Optional)</span></h4>
-                  </div>
                   <FormField
                     control={form.control}
                     name="date"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
-                        <FormControl>
-                          <Popover>
-                            <PopoverTrigger asChild>
+                        <label className="text-xs font-medium text-foreground">Preferred Date (Optional)</label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
                               <Button
                                 variant="outline"
                                 className={cn(
-                                  "w-full justify-start text-left font-normal h-8 md:h-11 rounded-lg border-2 transition-all text-xs md:text-sm",
-                                  !field.value && "text-muted-foreground",
-                                  fieldState.error && "border-destructive",
-                                  !fieldState.error && field.value && "border-primary bg-primary/5"
+                                  "w-full h-10 justify-start text-left font-normal text-sm",
+                                  !field.value && "text-muted-foreground"
                                 )}
                               >
-                                <CalendarIcon className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                                {field.value ? format(field.value, "dd-MMM-yyyy") : "Select date or skip"}
-                                {!fieldState.error && field.value && (
-                                  <Check className="ml-auto w-3 h-3 md:w-4 md:h-4 text-primary" />
-                                )}
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? format(field.value, "dd MMM yyyy") : "Select a date"}
                               </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) => {
-                                  const today = new Date();
-                                  today.setHours(0, 0, 0, 0);
-                                  return date < today;
-                                }}
-                                initialFocus
-                                className="p-2 md:p-3 pointer-events-auto"
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </FormControl>
-                        <FormMessage className="text-[10px] md:text-xs" />
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                return date < today;
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="timeSlot"
+                    render={({ field }) => (
+                      <FormItem>
+                        <label className="text-xs font-medium text-foreground">Preferred Time (Optional)</label>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-10 text-sm">
+                              <SelectValue placeholder="Select time slot" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {timeSlots.map((slot) => (
+                              <SelectItem key={slot} value={slot} className="text-sm">
+                                {slot}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormItem>
                     )}
                   />
                 </motion.div>
               )}
 
-              {/* Step 5: Message */}
-              {currentStep === 5 && (
+              {/* Step 4: Address & Area */}
+              {currentStep === 4 && (
                 <motion.div
-                  key="step5"
-                  custom={1}
+                  key="step4"
                   variants={slideVariants}
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="space-y-2 md:space-y-3"
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
                 >
-                  <div className="flex items-center gap-1 md:gap-2 mb-2 md:mb-4">
-                    <div className="w-0.5 md:w-1 h-4 md:h-6 bg-primary rounded-full" />
-                    <h4 className="text-xs md:text-lg font-semibold text-foreground">Additional Details <span className="text-[10px] md:text-xs text-muted-foreground font-normal">(Optional)</span></h4>
+                  <FormField
+                    control={form.control}
+                    name="area"
+                    render={({ field }) => (
+                      <FormItem>
+                        <label className="text-xs font-medium text-foreground">Your Area (Optional)</label>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-10 text-sm">
+                              <SelectValue placeholder="Select your area" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {areas.map((area) => (
+                              <SelectItem key={area} value={area} className="text-sm">
+                                {area}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <label className="text-xs font-medium text-foreground">Full Address (Optional)</label>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Building name, street, landmark..." 
+                            {...field}
+                            value={field.value || ""}
+                            rows={2}
+                            className="text-sm resize-none"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+              )}
+
+              {/* Step 5: Review & Submit */}
+              {currentStep === 5 && (
+                <motion.div
+                  key="step5"
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.2 }}
+                  className="space-y-3"
+                >
+                  <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Name:</span>
+                      <span className="font-medium text-foreground">{form.watch("name")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Phone:</span>
+                      <span className="font-medium text-foreground">{form.watch("phone")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Service:</span>
+                      <span className="font-medium text-foreground">{form.watch("service")}</span>
+                    </div>
+                    {form.watch("acType") && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">AC Type:</span>
+                        <span className="font-medium text-foreground">{form.watch("acType")}</span>
+                      </div>
+                    )}
+                    {form.watch("date") && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Date:</span>
+                        <span className="font-medium text-foreground">{format(form.watch("date")!, "dd MMM yyyy")}</span>
+                      </div>
+                    )}
+                    {form.watch("area") && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Area:</span>
+                        <span className="font-medium text-foreground">{form.watch("area")}</span>
+                      </div>
+                    )}
                   </div>
                   <FormField
                     control={form.control}
                     name="message"
-                    render={({ field, fieldState }) => (
+                    render={({ field }) => (
                       <FormItem>
+                        <label className="text-xs font-medium text-foreground">Any additional notes? (Optional)</label>
                         <FormControl>
-                          <div className="relative">
-                            <Textarea 
-                              placeholder="Any special requirements or notes..." 
-                              {...field}
-                              value={field.value || ""} 
-                              rows={3}
-                              className={cn(
-                                "text-xs md:text-sm rounded-lg border-2 transition-all resize-none",
-                                fieldState.error && "border-destructive"
-                              )}
-                              autoFocus
-                            />
-                            {field.value && field.value.length > 0 && (
-                              <div className="absolute right-2 md:right-3 bottom-2 md:bottom-3 text-[10px] md:text-xs text-muted-foreground">
-                                {field.value.length}/500
-                              </div>
-                            )}
-                          </div>
+                          <Textarea 
+                            placeholder="Special requests or details..." 
+                            {...field}
+                            value={field.value || ""}
+                            rows={2}
+                            className="text-sm resize-none"
+                          />
                         </FormControl>
-                        <FormMessage className="text-[10px] md:text-xs" />
                       </FormItem>
                     )}
                   />
@@ -455,16 +516,16 @@ const MultiStepBookingForm = () => {
             </AnimatePresence>
           </div>
 
-          {/* Modern Navigation Buttons */}
-          <div className="flex gap-2 md:gap-3 pt-1 md:pt-2">
+          {/* Navigation Buttons */}
+          <div className="flex gap-3 pt-2">
             {currentStep > 1 && (
               <Button 
                 type="button"
                 variant="outline"
                 onClick={goToPrevStep}
-                className="px-3 md:px-6 h-8 md:h-11 rounded-lg border-2 text-xs md:text-sm"
+                className="h-10"
               >
-                <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                <ArrowLeft className="w-4 h-4 mr-1" />
                 Back
               </Button>
             )}
@@ -473,31 +534,25 @@ const MultiStepBookingForm = () => {
               <Button 
                 type="button"
                 onClick={goToNextStep}
-                className="flex-1 h-8 md:h-11 rounded-lg shadow-md hover:shadow-lg transition-all text-xs md:text-sm"
+                className="flex-1 h-10"
               >
                 Continue
-                <ArrowRight className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
+                <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             ) : (
               <Button 
                 type="submit"
                 disabled={isSubmitting || !form.watch("name") || !form.watch("phone") || !form.watch("service")}
-                className={cn(
-                  "flex-1 h-8 md:h-11 rounded-lg shadow-md hover:shadow-lg transition-all text-xs md:text-sm",
-                  isSubmitting && "opacity-70 cursor-wait",
-                  (!form.watch("name") || !form.watch("phone") || !form.watch("service"))
-                    ? "bg-muted text-muted-foreground hover:bg-muted cursor-not-allowed" 
-                    : "bg-[#25D366] text-white hover:bg-[#20BA5A]"
-                )}
+                className="flex-1 h-10 bg-[#25D366] hover:bg-[#20BA5A] text-white"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Sending...
                   </>
                 ) : (
                   <>
-                    <MessageCircle className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <MessageCircle className="mr-2 h-4 w-4" />
                     Send via WhatsApp
                   </>
                 )}
